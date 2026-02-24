@@ -1,0 +1,149 @@
+/* ============================================================
+   AlphA — Print / PDF Styles
+   ============================================================ */
+
+@media print {
+  :root {
+    --bg:       #ffffff;
+    --bg-card:  #ffffff;
+    --bg-hover: #f5f5f5;
+    --border:   #dddddd;
+    --border-light: #cccccc;
+    --text:     #111111;
+    --text-dim: #333333;
+    --text-muted: #666666;
+    --accent:   #1a56c4;
+    --green:    #155f2a;
+    --sidebar-w: 0;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 12mm 14mm;
+  }
+
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    background: #fff;
+    color: #111;
+    font-size: 9pt;
+  }
+
+  #sidebar { display: none !important; }
+  #topbar { display: none !important; }
+  #main { margin-left: 0; }
+
+  .card, .quote-section-card {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px;
+    margin: 6mm 0;
+    page-break-inside: avoid;
+  }
+
+  /* Project Info */
+  #project-info {
+    display: block !important;
+  }
+  .info-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  label { font-size: 7pt; }
+  input, select, textarea {
+    border: none;
+    background: transparent;
+    padding: 2px 0;
+    font-size: 9pt;
+    color: #111;
+  }
+
+  /* Section cards */
+  .qsec-header { background: #f0f4f8 !important; }
+  .qsec-id { background: #dde6f5 !important; }
+  .qsec-body { display: block !important; }
+  .sub-body { display: block !important; }
+
+  /* Tables */
+  .items-table { font-size: 8pt; }
+  .items-table thead th {
+    background: #f5f5f5 !important;
+    color: #555 !important;
+  }
+  .items-table tbody tr { border-bottom: 1px solid #eee; }
+  .items-table tbody tr.has-value { background: #f9fbff !important; }
+
+  /* Hide empty rows in print */
+  .items-table tbody tr:not(.has-value) { display: none; }
+  .items-table tbody tr.sub-total-row { display: table-row !important; }
+
+  .cell-total.nonzero { color: #155f2a !important; }
+
+  /* Inputs in table cells */
+  .cell-num input, .cell-rate input, .cell-disc input, .cell-note input {
+    border: none;
+    background: transparent;
+    font-size: 8pt;
+    color: #111;
+    text-align: right;
+    width: auto;
+  }
+
+  /* Summary */
+  .summary-row .sr-total.nonzero { color: #155f2a !important; }
+  .grand-row.total-row span:last-child { color: #155f2a !important; }
+
+  /* Page breaks */
+  .quote-section-card { page-break-before: auto; }
+
+  /* Print header */
+  #main::before {
+    content: "AlphA — Advertising Production Quote";
+    display: block;
+    font-size: 8pt;
+    color: #888;
+    text-align: right;
+    padding-bottom: 4mm;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 4mm;
+  }
+
+  .btn-primary, .btn-secondary, .btn-ghost { display: none !important; }
+  .modal { display: none !important; }
+  #toast { display: none !important; }
+  .ts-toolbar .btn-primary { display: none !important; }
+
+  /* Top Sheet print layout */
+  #top-sheet {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    page-break-before: always;
+  }
+  .ts-header { border-bottom: 2px solid #1a56c4 !important; }
+  .ts-details-grid { border: 1px solid #ccc !important; }
+  .ts-col:first-child { border-right: 1px solid #ccc !important; }
+  .ts-label { color: #666 !important; }
+  .ts-val   { color: #111 !important; }
+  .ts-input { color: #111 !important; border-bottom-color: #aaa !important; }
+  .ts-table thead tr { background: #f0f4f8 !important; }
+  .ts-table th { color: #555 !important; }
+  .ts-table .td-nonzero { color: #155f2a !important; }
+  .ts-row-st td { background: #eef3fa !important; }
+  .ts-highlight { background: #f5f5f5 !important; color: #111 !important; }
+  .ts-grand { background: #e8f7ef !important; }
+  .ts-grand span { color: #155f2a !important; }
+  .ts-sig-box { border: 1px solid #ccc !important; height: 50px; }
+  .ts-validity-row { background: #f9f9f9 !important; border: 1px solid #ddd !important; }
+  .ts-sig-line { border-bottom: 1px solid #aaa !important; color: #333 !important; }
+}
+
+/* ---- Print Top Sheet ONLY ---- */
+@media print {
+  body.print-topsheet #project-info,
+  body.print-topsheet #quote-sections {
+    display: none !important;
+  }
+  body.print-topsheet #top-sheet {
+    page-break-before: auto !important;
+  }
+}
