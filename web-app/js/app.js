@@ -220,7 +220,7 @@ function buildItemTable(secIdx, sIdx, items) {
   const tbody = table.querySelector('tbody');
   items.forEach((item, iIdx) => {
     if (!STATE.itemValues[secIdx][sIdx][iIdx]) {
-      STATE.itemValues[secIdx][sIdx][iIdx] = { qty: 0, nb: 0, rate: 0, disc: 0, note: '' };
+      STATE.itemValues[secIdx][sIdx][iIdx] = { qty: 0, nb: 0, rate: 0, disc: 0, note: '', unit: '' };
     }
     tbody.appendChild(buildItemRow(secIdx, sIdx, iIdx, item));
   });
@@ -243,10 +243,12 @@ function buildItemRow(secIdx, sIdx, iIdx, item) {
   row.dataset.sub    = sIdx;
   row.dataset.item   = iIdx;
 
+  const v = STATE.itemValues[secIdx][sIdx][iIdx];
+
   row.innerHTML = `
     <td>${iIdx + 1}</td>
     <td><span class="item-name-text" title="${escHtml(item.name)}">${escHtml(item.name)}</span></td>
-    <td class="cell-unit">${escHtml(item.unit)}</td>
+    <td class="cell-unit"><input type="text" class="unit-input" value="${escHtml(v.unit || item.unit)}" placeholder="${escHtml(item.unit)}" /></td>
     <td class="cell-num"><input type="number" min="0" step="any" placeholder="0" /></td>
     <td class="cell-num"><input type="number" min="0" step="any" placeholder="1" /></td>
     <td class="cell-rate"><input type="number" min="0" step="any" placeholder="0" /></td>
@@ -255,8 +257,7 @@ function buildItemRow(secIdx, sIdx, iIdx, item) {
     <td class="cell-note"><input type="text" placeholder="..." /></td>
   `;
 
-  const [qtyIn, nbIn, rateIn, discIn, noteIn] = row.querySelectorAll('input');
-  const v = STATE.itemValues[secIdx][sIdx][iIdx];
+  const [unitIn, qtyIn, nbIn, rateIn, discIn, noteIn] = row.querySelectorAll('input');
 
   if (v.qty)  qtyIn.value  = v.qty;
   if (v.nb)   nbIn.value   = v.nb;
@@ -280,6 +281,7 @@ function buildItemRow(secIdx, sIdx, iIdx, item) {
 
   [qtyIn, nbIn, rateIn, discIn].forEach(inp => inp.addEventListener('input', onInput));
   noteIn.addEventListener('change', () => { v.note = noteIn.value; });
+  unitIn.addEventListener('change', () => { v.unit = unitIn.value; });
 
   if (calcLineTotal(v) > 0) row.classList.add('has-value');
   return row;
@@ -519,11 +521,12 @@ function rebuildItemValues() {
     if (!v) return;
 
     const inputs = row.querySelectorAll('input');
-    if (inputs[0]) inputs[0].value = v.qty  || '';
-    if (inputs[1]) inputs[1].value = v.nb   || '';
-    if (inputs[2]) inputs[2].value = v.rate || '';
-    if (inputs[3]) inputs[3].value = v.disc || '';
-    if (inputs[4]) inputs[4].value = v.note || '';
+    if (inputs[0] && v.unit) inputs[0].value = v.unit;  // unit (only override if user modified)
+    if (inputs[1]) inputs[1].value = v.qty  || '';
+    if (inputs[2]) inputs[2].value = v.nb   || '';
+    if (inputs[3]) inputs[3].value = v.rate || '';
+    if (inputs[4]) inputs[4].value = v.disc || '';
+    if (inputs[5]) inputs[5].value = v.note || '';
 
     const total = calcLineTotal(v);
     updateCellTotal(`cell-total-${secIdx}-${sIdx}-${iIdx}`, total);

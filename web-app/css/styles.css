@@ -403,7 +403,15 @@ textarea { resize: vertical; min-height: 40px; }
   color: var(--text-muted);
   font-size: 0.72rem;
   text-align: center;
-  width: 60px;
+  width: 70px;
+}
+.cell-unit input.unit-input {
+  width: 100%;
+  padding: 4px 4px;
+  font-size: 0.72rem;
+  text-align: center;
+  height: 28px;
+  color: var(--text-muted);
 }
 
 .cell-num {
