@@ -209,7 +209,7 @@ function buildItemTable(secIdx, sIdx, items) {
         <th>Qty</th>
         <th>Nb</th>
         <th>Rate (${STATE.currency})</th>
-        <th>Disc %</th>
+        <th>MK %</th>
         <th>Total (${STATE.currency})</th>
         <th>Note</th>
       </tr>
@@ -220,7 +220,7 @@ function buildItemTable(secIdx, sIdx, items) {
   const tbody = table.querySelector('tbody');
   items.forEach((item, iIdx) => {
     if (!STATE.itemValues[secIdx][sIdx][iIdx]) {
-      STATE.itemValues[secIdx][sIdx][iIdx] = { qty: 0, nb: 0, rate: 0, disc: 0, note: '', unit: '' };
+      STATE.itemValues[secIdx][sIdx][iIdx] = { qty: 0, nb: 0, rate: 0, disc: 10, note: '', unit: '' };
     }
     tbody.appendChild(buildItemRow(secIdx, sIdx, iIdx, item));
   });
@@ -252,7 +252,7 @@ function buildItemRow(secIdx, sIdx, iIdx, item) {
     <td class="cell-num"><input type="number" min="0" step="any" placeholder="0" /></td>
     <td class="cell-num"><input type="number" min="0" step="any" placeholder="1" /></td>
     <td class="cell-rate"><input type="number" min="0" step="any" placeholder="0" /></td>
-    <td class="cell-disc"><input type="number" min="0" max="100" step="0.1" placeholder="0" /></td>
+    <td class="cell-disc"><input type="number" min="0" max="100" step="0.1" placeholder="10" /></td>
     <td class="cell-total" id="cell-total-${secIdx}-${sIdx}-${iIdx}">—</td>
     <td class="cell-note"><input type="text" placeholder="..." /></td>
   `;
@@ -262,7 +262,7 @@ function buildItemRow(secIdx, sIdx, iIdx, item) {
   if (v.qty)  qtyIn.value  = v.qty;
   if (v.nb)   nbIn.value   = v.nb;
   if (v.rate) rateIn.value = v.rate;
-  if (v.disc) discIn.value = v.disc;
+  if (v.disc != null) discIn.value = v.disc;
   if (v.note) noteIn.value = v.note;
 
   function onInput() {
@@ -289,10 +289,10 @@ function buildItemRow(secIdx, sIdx, iIdx, item) {
 
 function calcLineTotal(v) {
   if (!v.rate) return 0;
-  const qty  = v.qty  || 1;
-  const nb   = v.nb   || 1;
-  const disc = v.disc || 0;
-  return qty * nb * v.rate * (1 - disc / 100);
+  const qty = v.qty || 1;
+  const nb  = v.nb  || 1;
+  const mk  = v.disc ?? 10;   // MK%: default 10% markup
+  return qty * nb * v.rate * (1 + mk / 100);
 }
 
 function updateCellTotal(id, val) {
@@ -525,7 +525,7 @@ function rebuildItemValues() {
     if (inputs[1]) inputs[1].value = v.qty  || '';
     if (inputs[2]) inputs[2].value = v.nb   || '';
     if (inputs[3]) inputs[3].value = v.rate || '';
-    if (inputs[4]) inputs[4].value = v.disc || '';
+    if (inputs[4] && v.disc != null) inputs[4].value = v.disc;
     if (inputs[5]) inputs[5].value = v.note || '';
 
     const total = calcLineTotal(v);
