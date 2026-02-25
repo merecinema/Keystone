@@ -220,7 +220,7 @@ function buildItemTable(secIdx, sIdx, items) {
   const tbody = table.querySelector('tbody');
   items.forEach((item, iIdx) => {
     if (!STATE.itemValues[secIdx][sIdx][iIdx]) {
-      STATE.itemValues[secIdx][sIdx][iIdx] = { qty: 0, nb: 0, rate: 0, disc: 10, note: '', unit: '' };
+      STATE.itemValues[secIdx][sIdx][iIdx] = { qty: 0, nb: 0, rate: 0, disc: null, note: '', unit: '' };
     }
     tbody.appendChild(buildItemRow(secIdx, sIdx, iIdx, item));
   });
@@ -252,7 +252,7 @@ function buildItemRow(secIdx, sIdx, iIdx, item) {
     <td class="cell-num"><input type="number" min="0" step="any" placeholder="0" /></td>
     <td class="cell-num"><input type="number" min="0" step="any" placeholder="1" /></td>
     <td class="cell-rate"><input type="number" min="0" step="any" placeholder="0" /></td>
-    <td class="cell-disc"><input type="number" min="0" max="100" step="0.1" placeholder="10" /></td>
+    <td class="cell-disc"><input type="number" min="0" max="100" step="0.1" placeholder="10.0" /></td>
     <td class="cell-total" id="cell-total-${secIdx}-${sIdx}-${iIdx}">—</td>
     <td class="cell-note"><input type="text" placeholder="..." /></td>
   `;
@@ -269,7 +269,7 @@ function buildItemRow(secIdx, sIdx, iIdx, item) {
     v.qty  = parseFloat(qtyIn.value)  || 0;
     v.nb   = parseFloat(nbIn.value)   || 0;
     v.rate = parseFloat(rateIn.value) || 0;
-    v.disc = parseFloat(discIn.value) || 0;
+    v.disc = discIn.value.trim() === '' ? null : parseFloat(discIn.value);
     v.note = noteIn.value;
     const total = calcLineTotal(v);
     updateCellTotal(`cell-total-${secIdx}-${sIdx}-${iIdx}`, total);
